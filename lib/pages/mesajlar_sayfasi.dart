@@ -6,6 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ogrenci_app/repository/mesajlar_repository.dart';
 
+import '../models/mesaj.dart';
+
 class MesajlarSayfasi extends ConsumerStatefulWidget {
   const MesajlarSayfasi( {super.key});
 
