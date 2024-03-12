@@ -1,7 +1,7 @@
 class Ogretmen{
   String ad;
   String soyad;
-  int yas;
+  String yas;
   String cinsiyet;
 
   Ogretmen(this.ad, this.soyad, this.yas, this.cinsiyet);

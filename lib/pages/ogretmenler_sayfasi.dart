@@ -8,10 +8,12 @@ class OgretmenlerSayfasi extends ConsumerWidget {
   const OgretmenlerSayfasi({super.key});
 
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
-    final ogretmenlerRepository=ref.watch(ogretmenlerProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ogretmenlerRepository = ref.watch(ogretmenlerProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text("Öğretmenler"),),
+      appBar: AppBar(
+        title: const Text("Öğretmenler"),
+      ),
       body: Column(
         children: [
           PhysicalModel(
@@ -21,53 +23,100 @@ class OgretmenlerSayfasi extends ConsumerWidget {
               children: [
                 Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 32.0,horizontal: 32.0),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 32.0, horizontal: 32.0),
                     child: Text(
-                        "${ogretmenlerRepository.ogretmenler.length} Öğretmen"
-                    ),
+                        "${ogretmenlerRepository.ogretmenler.length} Öğretmen"),
                   ),
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.centerRight,
-                  child: IconButton(
-                    icon: const Icon(Icons.download),
-                    onPressed: () {
-                      ref.read(ogretmenlerProvider).indir();
-                    },
-                  ),
+                  child: OgretmenIndirmeButonu(),
                 ),
               ],
             ),
           ),
           Expanded(
             child: ListView.separated(
-              itemBuilder: (BuildContext context, int index)=>OgretmenSatiri(
-                ogretmenlerRepository.ogretmenler[index]
-
-              ),
-              separatorBuilder: (BuildContext context, int index) =>const Divider(),
+              itemBuilder: (BuildContext context, int index) =>
+                  OgretmenSatiri(ogretmenlerRepository.ogretmenler[index]),
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(),
               itemCount: ogretmenlerRepository.ogretmenler.length,
-
             ),
           ),
         ],
       ),
+      floatingActionButton:FloatingActionButton(
+        onPressed: () {
+
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
-class OgretmenSatiri extends StatelessWidget {
-  final Ogretmen ogretmen;
-  const OgretmenSatiri(this.ogretmen,{
+
+class OgretmenIndirmeButonu extends StatefulWidget {
+  const OgretmenIndirmeButonu({
     super.key,
   });
 
+  @override
+  State<OgretmenIndirmeButonu> createState() => _OgretmenIndirmeButonuState();
+}
+
+class _OgretmenIndirmeButonuState extends State<OgretmenIndirmeButonu> {
+  bool isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(builder: (context, ref, child) {
+      return isLoading
+          ? CircularProgressIndicator()
+          : IconButton(
+              icon: const Icon(Icons.download),
+              onPressed: () async {
+                //TODO Loading
+                //TODO Error
+                try {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  await ref.read(ogretmenlerProvider).indir();
+                } catch(e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString()))
+                  );
+                  setState(() {
+                    isLoading = false;
+                  });
+                }
+                finally {
+                setState(() {
+                isLoading = false;
+                });
+                }
+              },
+            );
+    });
+  }
+}
+
+class OgretmenSatiri extends StatelessWidget {
+  final Ogretmen ogretmen;
+  const OgretmenSatiri(
+    this.ogretmen, {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Text("${ogretmen.ad} ${ogretmen.soyad}"),
-      leading: IntrinsicWidth(child: Center(child: Text(
-          ogretmen.cinsiyet.toLowerCase() == "erkek" ? "👨" : "👩"))),
+      leading: IntrinsicWidth(
+          child: Center(
+              child: Text(
+                  ogretmen.cinsiyet.toLowerCase() == "erkek" ? "👨" : "👩"))),
     );
   }
 }

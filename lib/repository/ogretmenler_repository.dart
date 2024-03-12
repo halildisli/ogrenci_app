@@ -7,14 +7,14 @@ import '../models/ogretmen.dart';
 class OgretmenlerRepository extends ChangeNotifier{
 
   List<Ogretmen> ogretmenler=[
-    Ogretmen("Faruk", "Yılmaz", 18, "Erkek"),
-    Ogretmen("Semiha", "Çelik", 28, "Kadın"),
+    Ogretmen("Faruk", "Yılmaz", "18", "Erkek"),
+    Ogretmen("Semiha", "Çelik", "28", "Kadın"),
   ];
   final DataService dataService;
   OgretmenlerRepository(this.dataService);
 
-  void indir(){
-    Ogretmen ogretmen=dataService.ogretmenIndir();
+  Future<void> indir() async {
+    Ogretmen ogretmen=await dataService.ogretmenIndir();
 
 
     ogretmenler.add(ogretmen);
